@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love Clock 💞</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;600&family=Pacifico&family=Mali:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box}
+:root{--pulse:0}
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:'Anuphan',sans-serif;
+  background:
+    radial-gradient(circle at 50% calc(50% + var(--pulse)*26px),
+      #ffeaf3 0%,
+      #f7c6dc 70%);
+  transition:background .25s ease, opacity .45s ease;
+  overflow:hidden;
+}
+
+/* ===== HEART BACKGROUND LAYER ===== */
+.heart-layer{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+.heart{
+  position:absolute;
+  font-size:92px;
+  opacity:.32;
+  animation:float 18s ease-in-out forwards;
+  filter:blur(1.2px);
+}
+@keyframes float{
+  0%{transform:translateY(20vh) scale(.95)}
+  50%{transform:translateY(-40vh) scale(1.15)}
+  100%{transform:translateY(-120vh) scale(1);opacity:0}
+}
+
+/* ===== HEADER ===== */
+.header{
+  text-align:center;
+  padding:24px 20px 6px;
+  position:relative;
+  z-index:2;
+}
+.header h1{
+  font-family:'Pacifico',cursive;
+  font-size:50px;
+  color:#ff6fae;
+  margin-bottom:6px;
+}
+.header p{
+  font-size:15px;
+  color:#777;
+  margin:0;
+}
+
+/* ===== BUTTONS ===== */
+.sound-toggle,
+.back-btn{
+  position:fixed;
+  top:16px;
+  padding:10px 14px;
+  border-radius:20px;
+  border:none;
+  background:rgba(255,255,255,.65);
+  backdrop-filter:blur(10px);
+  box-shadow:0 6px 16px rgba(0,0,0,.15);
+  font-size:16px;
+  cursor:pointer;
+  z-index:3;
+}
+.sound-toggle{right:16px}
+.back-btn{left:16px}
+
+/* ===== WRAPPER ===== */
+.wrapper{
+  max-width:420px;
+  margin:0 auto;
+  padding:8px 16px 32px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  position:relative;
+  z-index:2;
+}
+
+/* ===== CARD ===== */
+.card{
+  background:#fff;
+  border-radius:28px;
+  padding:20px;
+  box-shadow:0 18px 44px rgba(0,0,0,.16);
+  text-align:center;
+}
+
+/* ===== CLOCK ===== */
+.clock{
+  width:210px;
+  height:210px;
+  border-radius:50%;
+  border:12px solid #ffd1e6;
+  margin:0 auto;
+  position:relative;
+  overflow:hidden;
+  background:#fff;
+}
+
+/* clock face image */
+.clock-face{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.clock-face img{
+  width:72%;
+  object-fit:contain;
+  animation:faceZoom 24s ease-in-out infinite;
+}
+@keyframes faceZoom{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.05)}
+  100%{transform:scale(1)}
+}
+
+/* overlay + vignette */
+.clock-overlay{
+  position:absolute;
+  inset:0;
+  background:rgba(255,255,255,.55);
+}
+.clock-vignette{
+  position:absolute;
+  inset:-2px;
+  border-radius:50%;
+  box-shadow:inset 0 0 28px rgba(255,160,200,.55);
+}
+
+/* hands */
+.hand{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform-origin:bottom center;
+  transform:translate(-50%,-100%);
+}
+.hour{width:6px;height:42px;background:#ff8fb8;border-radius:6px}
+.minute{width:4px;height:62px;background:#ff5fa2;border-radius:6px}
+.second{width:2px;height:82px;background:#ff3f86}
+
+/* center */
+.center{
+  width:16px;
+  height:16px;
+  background:#ff5fa2;
+  border-radius:50%;
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  box-shadow:0 0 0 4px rgba(255,160,200,.45);
+}
+
+/* ===== TEXT ===== */
+.digital{
+  font-size:18px;
+  font-weight:600;
+  color:#ff5fa2;
+}
+.detail{
+  font-family:'Mali',cursive;
+  font-size:16px;
+  line-height:1.8;
+}
+.detail p{margin:4px 0}
+</style>
+</head>
+
+<body>
+
+<!-- HEART BACKGROUND -->
+<div class="heart-layer" id="heartLayer"></div>
+
+<button class="back-btn" onclick="goBack()">←</button>
+<button class="sound-toggle" id="soundBtn">🔇</button>
+
+<div class="header">
+  <h1>Love Clock</h1>
+  <p>เวลาที่เติบโตไปพร้อมกันของเค้ากับบี๋ 💗</p>
+</div>
+
+<div class="wrapper">
+
+  <div class="card">
+    <div class="clock">
+      <div class="clock-face">
+        <img src="our-drawing.jpeg" alt="our love drawing">
+      </div>
+      <div class="clock-overlay"></div>
+      <div class="clock-vignette"></div>
+
+      <div class="hand hour" id="h"></div>
+      <div class="hand minute" id="m"></div>
+      <div class="hand second" id="s"></div>
+      <div class="center"></div>
+    </div>
+  </div>
+
+  <div class="card digital" id="digital"></div>
+  <div class="card detail" id="detail"></div>
+
+</div>
+
+<!-- AUDIO -->
+<audio id="bgm" src="good-together.mp3" preload="auto" loop></audio>
+<audio id="tick" src="tick.mp3" preload="auto"></audio>
+
+<script>
+/* ===== TIME ===== */
+const start=new Date("2025-08-29T00:00:00");
+const h=document.getElementById("h");
+const m=document.getElementById("m");
+const s=document.getElementById("s");
+const digital=document.getElementById("digital");
+const detail=document.getElementById("detail");
+
+/* ===== AUDIO ===== */
+const bgm=document.getElementById("bgm");
+const tick=document.getElementById("tick");
+const soundBtn=document.getElementById("soundBtn");
+
+let audioUnlocked=false;
+let soundOn=false;
+let lastSec=-1;
+
+/* ===== HEART BACKGROUND ===== */
+const heartLayer=document.getElementById("heartLayer");
+let heartInterval=null;
+
+function spawnHeart(){
+  const heart=document.createElement("div");
+  heart.className="heart";
+  heart.textContent="💗";
+  heart.style.left=Math.random()*100+"%";
+  heart.style.bottom="-120px";
+  heartLayer.appendChild(heart);
+  setTimeout(()=>heart.remove(),18000);
+}
+
+function startHearts(){
+  if(heartInterval) return;
+  heartInterval=setInterval(spawnHeart,1300);
+}
+function stopHearts(){
+  clearInterval(heartInterval);
+  heartInterval=null;
+}
+
+/* ===== SOUND TOGGLE ===== */
+soundBtn.addEventListener("click",()=>{
+  if(!audioUnlocked){
+    bgm.volume=0.45;
+    bgm.play().then(()=>{
+      audioUnlocked=true;
+      soundOn=true;
+      soundBtn.textContent="🔊";
+      startHearts();
+    });
+    return;
+  }
+
+  soundOn=!soundOn;
+  if(soundOn){
+    bgm.play();
+    soundBtn.textContent="🔊";
+    startHearts();
+  }else{
+    bgm.pause();
+    soundBtn.textContent="🔇";
+    stopHearts();
+  }
+});
+
+/* ===== UPDATE ===== */
+function update(){
+  const now=new Date();
+  const diff=now-start;
+
+  const d=Math.floor(diff/86400000);
+  const hTot=Math.floor(diff/3600000);
+  const mTot=Math.floor(diff/60000);
+  const sTot=Math.floor(diff/1000);
+
+  const sec=sTot%60;
+  const min=(mTot%60)+sec/60;
+  const hr=(hTot%12)+min/60;
+
+  h.style.transform=`translate(-50%,-100%) rotate(${hr*30}deg)`;
+  m.style.transform=`translate(-50%,-100%) rotate(${min*6}deg)`;
+  s.style.transform=`translate(-50%,-100%) rotate(${sec*6}deg)`;
+
+  document.documentElement.style.setProperty(
+    "--pulse",
+    Math.sin(sec/60*Math.PI*2)
+  );
+
+  if(soundOn && sec!==lastSec){
+    tick.currentTime=0;
+    tick.volume=0.35;
+    tick.play().catch(()=>{});
+    lastSec=sec;
+  }
+
+  digital.textContent=`${d}D | ${hTot%24}H | ${min|0}M | ${sec}S`;
+  detail.innerHTML=`
+    <p>💞 เค้ากับบี๋คบกันมาแล้ว</p>
+    <p>📅 ${d} วัน</p>
+    <p>⏰ ${hTot} ชั่วโมง</p>
+    <p>⌛ ${mTot} นาที</p>
+    <p>🕯️ ${sTot} วินาที</p>
+        <p> ...and many,many more days with you 🌻 </p>
+  `;
+}
+
+setInterval(update,1000);
+update();
+
+/* ===== BACK TO MENU (REAL) ===== */
+function goBack(){
+  document.body.style.opacity=0;
+  setTimeout(()=>{
+    window.location.href="menu.html";
+  },450);
+}
+</script>
+
+</body>
+</html>

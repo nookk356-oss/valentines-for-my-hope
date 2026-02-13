@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz ของเรา</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:'Anuphan',sans-serif;
+  background:linear-gradient(135deg,#e8f0ff,#f6e8ff);
+  overflow-x:hidden;
+}
+
+/* ===== HEADER ===== */
+.header{
+  text-align:center;
+  padding:50px 20px 30px;
+}
+.header h1{
+  margin:0;
+  font-size:40px;
+}
+.header .sub{
+  opacity:.6;
+  margin-top:8px;
+}
+
+/* ===== QUIZ CARD ===== */
+.quiz-container{
+  max-width:700px;
+  margin:0 auto 80px;
+  padding:0 20px;
+}
+
+.question-card{
+  background:#ffffff;
+  border-radius:22px;
+  padding:30px;
+  margin-bottom:30px;
+  box-shadow:0 20px 40px rgba(0,0,0,.15);
+  transition:.4s;
+}
+
+.question-card h2{
+  margin-top:0;
+  font-size:22px;
+}
+
+.option{
+  margin-top:15px;
+  padding:14px 18px;
+  border-radius:14px;
+  background:#f5f7ff;
+  cursor:pointer;
+  transition:.25s;
+}
+
+.option:hover{
+  transform:translateY(-2px);
+  background:#e8ecff;
+}
+
+.option.selected{
+  background:#ffd6ec;
+  transform:scale(1.03);
+}
+
+/* ===== HEART FLOAT ===== */
+.heart{
+  position:fixed;
+  font-size:22px;
+  animation:floatUp 2s ease forwards;
+  pointer-events:none;
+}
+
+@keyframes floatUp{
+  0%{opacity:1; transform:translateY(0) scale(1);}
+  100%{opacity:0; transform:translateY(-120px) scale(1.6);}
+}
+
+/* ===== AUDIO BUTTON ===== */
+.audio-btn{
+  position:fixed;
+  top:16px;
+  right:16px;
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 10px 20px rgba(0,0,0,.25);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:20;
+}
+</style>
+</head>
+
+<body>
+
+<div class="audio-btn" onclick="toggleMusic()">🔊</div>
+
+<header class="header">
+  <h1>Quiz ของเรา</h1>
+  <div class="sub">How well do you know us? 🤍</div>
+</header>
+
+<div class="quiz-container" id="quiz"></div>
+
+<!-- AUDIO -->
+<audio id="bgm" src="chueafai-hugo.mp3" loop></audio>
+<audio id="popSound" src="star-rate.mp3"></audio>
+
+<script>
+
+const questions = [
+{
+  q:"1. เวลาเค้าไม่ไหว ดิ่งดาวน์ บี๋มักจะทำอะไรให้เค้า?",
+  options:[
+    "ลูบหัวแล้วบอกว่าทุกๆอย่างจะดีขึ้นเอง",
+    "คอยถามว่ารู้สึกยังไง แล้วโอบกอดความรู้สึกของเค้า",
+    "พาไปอี้สๆของอร่อย",
+    "ทั้งหมดที่กล่าวมาฮิ้ๆ ❤️"
+  ]
+},
+{
+  q:"2. ข้อใดต่อไปนี้ที่ทำให้นุกนุกรู้สึกปลอดภัยที่สุด?",
+  options:[
+    "ตำรวจ",
+    "สเปรย์พริกไทย",
+    "สัญญาณกันขโมย",
+    "แค่บี๋อยู่ข้าง ๆ 🤍"
+  ]
+},
+{
+  q:"3. ความรักของเราคล้ายอะไรที่สุด?",
+  options:[
+    "ความมั่นคง",
+    "การเข้าใจ",
+    "เรียนรู้ และเติบโตไปด้วยกัน",
+    "บ้านของกันและกัน 💖"
+  ]
+},
+{
+  q:"4. ถ้าโลกใจร้ายกับเค้า ใครจะอยู่ข้างเค้า?",
+  options:[
+    "ไม่มีใคร 😿",
+    "ตัวเค้าเอง",
+    "บี๋",
+    "เค้าและบี๋ไปด้วยกัน 👭💗"
+  ]
+},
+{
+  q:"5. สุดท้ายแล้ว...",
+  options:[
+    "เค้าอยากบอกบี๋ว่า…",
+    "บี๋รู้จักเค้าดีมากกกกกกกๆๆเยยย 🤍",
+    "และเค้าก็ดีใจมากที่มีบี๋อยู่ข้าง ๆ",
+    "ลุยกันต่ออออ เพราะความรักของเรายังไม่จบ 🌷"
+  ]
+}
+];
+
+const quizContainer = document.getElementById("quiz");
+
+questions.forEach((item,index)=>{
+  const card = document.createElement("div");
+  card.className="question-card";
+
+  const title = document.createElement("h2");
+  title.textContent=item.q;
+  card.appendChild(title);
+
+  item.options.forEach(opt=>{
+    const div=document.createElement("div");
+    div.className="option";
+    div.textContent=opt;
+
+    div.onclick=()=>{
+      div.classList.add("selected");
+      pop();
+      spawnHearts();
+    }
+
+    card.appendChild(div);
+  });
+
+  quizContainer.appendChild(card);
+});
+
+/* ===== HEART EFFECT ===== */
+function spawnHearts(){
+  for(let i=0;i<6;i++){
+    const heart=document.createElement("div");
+    heart.className="heart";
+    heart.textContent="💗";
+    heart.style.left=Math.random()*100+"vw";
+    heart.style.bottom="0px";
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),2000);
+  }
+}
+
+/* ===== SOUND ===== */
+const popSound=document.getElementById("popSound");
+function pop(){
+  popSound.currentTime=0;
+  popSound.play().catch(()=>{});
+}
+
+/* ===== MUSIC ===== */
+const bgm=document.getElementById("bgm");
+let playing=false;
+
+function toggleMusic(){
+  if(!playing){
+    bgm.volume=0.4;
+    bgm.play().catch(()=>{});
+    playing=true;
+  }else{
+    bgm.pause();
+    playing=false;
+  }
+}
+
+</script>
+
+</body>
+</html>

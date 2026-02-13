@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Love 💗</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box}
+
+:root{
+  --c1:#a8d8f0;
+  --c2:#f7b7d6;
+  --c3:#fff1c1;
+}
+
+body{
+  margin:0;
+  height:100vh;
+  font-family:'Anuphan',sans-serif;
+  background:
+    radial-gradient(circle at 20% 20%, var(--c1), transparent 55%),
+    radial-gradient(circle at 80% 30%, var(--c2), transparent 60%),
+    radial-gradient(circle at 50% 80%, var(--c3), transparent 60%),
+    linear-gradient(180deg,#ffd6e8,#f7b7d6);
+  background-size:200% 200%;
+  animation:bgFlow 28s ease-in-out infinite;
+  overflow:hidden;
+  color:#fff;
+  transition:opacity .6s ease;
+}
+@keyframes bgFlow{
+  0%{background-position:0% 0%}
+  50%{background-position:100% 100%}
+  100%{background-position:0% 0%}
+}
+
+.lover-bg{
+  position:fixed;
+  inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family:'Pacifico',cursive;
+  font-size:160px;
+  color:rgba(255,90,150,.22);
+  letter-spacing:3px;
+  pointer-events:none;
+  animation:loverFloat 20s ease-in-out infinite;
+}
+@keyframes loverFloat{
+  0%{transform:translateY(10px)}
+  50%{transform:translateY(-20px)}
+  100%{transform:translateY(10px)}
+}
+
+.star{
+  position:absolute;
+  font-size:28px;
+  color:rgba(255,255,255,.45);
+  animation:starFloat linear infinite;
+}
+@keyframes starFloat{
+  from{transform:translateY(120vh)}
+  to{transform:translateY(-140vh)}
+}
+
+.music-toggle{
+  position:fixed;
+  top:18px;
+  right:18px;
+  padding:10px 16px;
+  border-radius:22px;
+  border:none;
+  font-size:16px;
+  background:rgba(255,255,255,.35);
+  backdrop-filter:blur(14px);
+  box-shadow:0 6px 18px rgba(0,0,0,.18);
+  color:#fff;
+  cursor:pointer;
+  z-index:20;
+}
+.music-toggle.off{opacity:.6}
+
+.header{
+  text-align:center;
+  padding:24px 20px 6px;
+}
+.header h1{
+  font-family:'Pacifico',cursive;
+  font-size:56px;
+  margin:0;
+}
+.header p{
+  font-size:16px;
+  margin-top:6px;
+}
+
+.main{
+  height:calc(100vh - 190px);
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+}
+
+.content{
+  width:100%;
+  max-width:420px;
+  padding:0 18px;
+}
+
+.hero{
+  background:rgba(255,255,255,.32);
+  backdrop-filter:blur(18px);
+  border-radius:32px;
+  padding:26px 22px;
+  margin:14px 0 18px;
+  box-shadow:0 20px 44px rgba(0,0,0,.25);
+  cursor:pointer;
+  transition:.3s;
+}
+.hero:active{transform:scale(.97)}
+
+.menu-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+.menu-card{
+  background:#fff;
+  border-radius:20px;
+  padding:16px 10px 14px;
+  text-align:center;
+  box-shadow:0 10px 24px rgba(0,0,0,.12);
+  cursor:pointer;
+  transition:.2s;
+}
+.menu-card:active{transform:scale(.94)}
+
+.menu-card .icon{
+  font-size:24px;
+  margin-bottom:6px;
+}
+.menu-card h3{
+  font-size:14px;
+  color:#333;
+  margin:0 0 2px;
+}
+.menu-card span{
+  font-size:11px;
+  color:#777;
+}
+</style>
+</head>
+
+<body>
+
+<div class="lover-bg">lover</div>
+
+<script>
+for(let i=0;i<20;i++){
+  const s=document.createElement("div");
+  s.className="star";
+  s.textContent="✦";
+  s.style.left=Math.random()*100+"%";
+  s.style.animationDuration=22+Math.random()*18+"s";
+  s.style.animationDelay=Math.random()*-20+"s";
+  document.body.appendChild(s);
+}
+</script>
+
+<audio id="bgm" src="lover.mp3" loop></audio>
+<button class="music-toggle off" id="musicBtn">🎵</button>
+
+<div class="header">
+  <h1>Our Love</h1>
+  <p>พื้นที่เล็ก ๆ ของเค้ากับบี๋ 🤍</p>
+</div>
+
+<div class="main">
+  <div class="content">
+
+    <div class="hero" onclick="go('clock.html')">
+      <h2>💞 Love Clock</h2>
+      <p>เค้ากับบี๋คบกันมากี่วันแล้วนะ</p>
+    </div>
+
+    <div class="menu-grid">
+
+      <div class="menu-card" onclick="go('letter.html')">
+        <div class="icon">💌</div>
+        <h3>จดหมายถึงบี๋</h3>
+        <span>เค้าเขียนให้บี๋</span>
+      </div>
+
+      <!-- 🔥 ตรงนี้แก้แล้ว -->
+      <div class="menu-card" onclick="go('quiz-menu.html')">
+        <div class="icon">🎯</div>
+        <h3>Quiz ของเรา</h3>
+        <span>บี๋จำเค้าได้ไหม</span>
+      </div>
+
+      <div class="menu-card" onclick="go('music.html')">
+        <div class="icon">🎵</div>
+        <h3>เพลงของเรา</h3>
+        <span>ฟังไปพร้อมกันนะ</span>
+      </div>
+
+      <div class="menu-card" onclick="go('timeline.html')">
+        <div class="icon">🕰️</div>
+        <h3>Timeline ความรัก</h3>
+        <span>ตั้งแต่วันแรกที่เจอ</span>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+function go(page){
+  window.location.href = page;
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Final Flow</title>
+
+<style>
+body{
+  margin:0;
+  font-family:sans-serif;
+  background:linear-gradient(135deg,#fff8dc,#ffe4e1);
+  text-align:center;
+  padding:40px;
+}
+
+.card{
+  max-width:650px;
+  margin:auto;
+  background:#fff;
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 20px 40px rgba(0,0,0,.15);
+  transition:.3s ease;
+}
+
+.card.shake{
+  animation:shake .4s ease;
+}
+
+@keyframes shake{
+  0%{transform:translateX(0)}
+  20%{transform:translateX(-12px)}
+  40%{transform:translateX(12px)}
+  60%{transform:translateX(-8px)}
+  80%{transform:translateX(8px)}
+  100%{transform:translateX(0)}
+}
+
+.timer-bar{
+  height:12px;
+  background:#eee;
+  border-radius:10px;
+  overflow:hidden;
+  margin-bottom:15px;
+}
+
+.timer-fill{
+  height:100%;
+  width:100%;
+  background:linear-gradient(90deg,#ffd700,#ffb700);
+  transition:width 1s linear;
+}
+
+.option{
+  margin:12px 0;
+  padding:14px;
+  background:#fff3cd;
+  border-radius:12px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.option:hover{
+  transform:scale(1.02);
+  background:#ffeaa7;
+}
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.7);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+
+.overlay-box{
+  background:#fff;
+  padding:40px 60px;
+  border-radius:25px;
+  font-size:22px;
+  text-align:center;
+  animation:pop .4s ease;
+}
+
+@keyframes pop{
+  from{transform:scale(.6);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+
+button{
+  margin-top:20px;
+  padding:10px 20px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  background:#ffd700;
+  font-weight:bold;
+}
+
+.menu-btn{
+  position:fixed;
+  top:20px;
+  left:20px;
+  background:#fff;
+  padding:8px 14px;
+  border-radius:12px;
+  box-shadow:0 5px 15px rgba(0,0,0,.2);
+  cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="menu-btn" onclick="goMenu()">← กลับหน้าเมนู</div>
+
+<div class="card" id="card">
+  <div class="timer-bar">
+    <div class="timer-fill" id="timerFill"></div>
+  </div>
+  <div>เวลา: <span id="time">10</span></div>
+  <h2 id="question"></h2>
+  <div id="options"></div>
+</div>
+
+<audio id="bgm" src="yellow.mp3" loop></audio>
+<audio id="correctSound" src="star-rate.mp3"></audio>
+<audio id="errorSound" src="error.mp3"></audio>
+<audio id="tickSound" src="tick.mp3"></audio>
+
+<script>
+
+const quiz=[
+{q:"เราเริ่มคุยกันเดือนอะไร?",a:["มกราคม","ธันวาคม","สิงหาคม","เมษายน"],correct:0},
+{q:"ใครขอคบก่อน?",a:["แน่นอนว่าบี๋น่ะสิ","นุกนุกสุดน่ารัก","ไม่มีใครขอคบรู้ตัวอีกทีก็เป็นแฟนกันแล้ว","ลุงสมชัย"],correct:0},
+{q:"เค้างอแงเรื่องอะไรบ่อยที่สุด?",a:["เรื่องอยากเจอ","เรื่องดึ้บๆ","เรื่องของกิน","เรื่องของเล่น"],correct:1},
+{q:"สถานที่บี๋ตกหลุมรักเค้าคือที่ไหน?",a:["แสงโสม","ท้องฟ้าจำลอง","คอนเสิร์ต Fellowfellow","ฟิวเจอร์พาร์ค"],correct:0},
+{q:"บี๋ชอบเรียกเค้าว่าอะไร?",a:["ไอตูด","นุกนุกสุดน่ารักนุกนุกลิงชิวาวา","ดงบุริ","ไม่มีข้อถูกเพราะเรียกทุกอย่าง"],correct:3}
+];
+
+let index=0;
+let timeLeft=10;
+let timer;
+let tickAudio=document.getElementById("tickSound");
+let gameActive=true;
+
+const card=document.getElementById("card");
+const bgm=document.getElementById("bgm");
+bgm.volume=.4;
+document.body.addEventListener("click",()=>bgm.play().catch(()=>{}),{once:true});
+
+function startTimer(){
+  timeLeft=10;
+  timer=setInterval(()=>{
+    timeLeft--;
+    document.getElementById("time").textContent=timeLeft;
+    document.getElementById("timerFill").style.width=(timeLeft*10)+"%";
+
+    if(timeLeft<=3){
+      tickAudio.currentTime=0;
+      tickAudio.play();
+    }
+
+    if(timeLeft<=0){
+      clearInterval(timer);
+      tickAudio.pause();
+      tickAudio.currentTime=0;
+      gameOver("⏰ เวลาหมด! เล่นใหม่อีกครั้ง");
+    }
+  },1000);
+}
+
+function showQ(){
+  if(!gameActive) return;
+  const q=quiz[index];
+  document.getElementById("question").textContent=q.q;
+  const box=document.getElementById("options");
+  box.innerHTML="";
+  q.a.forEach((opt,i)=>{
+    const d=document.createElement("div");
+    d.className="option";
+    d.textContent=opt;
+    d.onclick=()=>check(i);
+    box.appendChild(d);
+  });
+  startTimer();
+}
+
+function check(i){
+  if(!gameActive) return;
+  clearInterval(timer);
+  tickAudio.pause();
+  tickAudio.currentTime=0;
+
+  if(i===quiz[index].correct){
+    document.getElementById("correctSound").play();
+    index++;
+    if(index<quiz.length){
+      setTimeout(showQ,500);
+    }else{
+      winScreen();
+    }
+  }else{
+    document.getElementById("errorSound").play();
+    card.classList.add("shake");
+    setTimeout(()=>card.classList.remove("shake"),400);
+    gameOver("❌ ตอบผิด! เล่นใหม่อีกครั้ง");
+  }
+}
+
+function gameOver(message){
+  gameActive=false;
+  showOverlay(message,true);
+}
+
+function winScreen(){
+  gameActive=false;
+  showOverlay("🎉 ยินดีด้วย ตอบถูกครบ!<br>คุณได้รับรางวัล 💛",false);
+}
+
+function showOverlay(text,isFail){
+  const overlay=document.createElement("div");
+  overlay.className="overlay";
+  overlay.innerHTML=`
+    <div class="overlay-box">
+      ${text}
+      <br>
+      ${isFail
+        ? `<button onclick="restart()">เล่นใหม่</button>`
+        : `<button onclick="spinReward()">รับรางวัล</button>`
+      }
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+function restart(){
+  location.reload();
+}
+
+function spinReward(){
+  document.querySelector(".overlay").remove();
+  const reward=getCoupon();
+  const overlay=document.createElement("div");
+  overlay.className="overlay";
+  overlay.innerHTML=`
+    <div class="overlay-box">
+      🎁 ${reward}
+      <br>
+      <button onclick="goMenu()">กลับหน้าเมนู</button>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+let bigRewardUsed=localStorage.getItem("bigRewardUsed")==="true";
+
+function getCoupon(){
+  const r=Math.random();
+  if(r<0.4) return "💆‍♂️ นวดหลัง 1 ครั้ง";
+  if(r<0.75) return "🐾 เกาหัว 1 ครั้ง";
+  if(r<0.95) return "🍰 เลี้ยงขนม 1 มื้อ";
+  if(!bigRewardUsed){
+    bigRewardUsed=true;
+    localStorage.setItem("bigRewardUsed","true");
+    return "👑 รางวัลพิเศษสุด: ขออะไรก็ได้ 1 อย่าง";
+  }
+  return "🍰 เลี้ยงขนม 1 มื้อ";
+}
+
+function goMenu(){
+  window.location.href="menu.html"; 
+}
+
+showQ();
+
+</script>
+</body>
+</html>
