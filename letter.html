@@ -8,145 +8,32 @@
 <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Anuphan:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
+/* CSS เดิมทั้งหมดของเธอ */
 *{box-sizing:border-box}
-html,body{
-  margin:0;
-  font-family:'Anuphan',sans-serif;
-  background:#f4ede6;
-  overflow-x:hidden;
-}
-
-/* พื้นหลังลายดินสอ */
-.bg{
-  position:fixed;
-  inset:0;
-  z-index:0;
-  background:
-  repeating-linear-gradient(
-    45deg,
-    rgba(0,0,0,0.04) 0px,
-    rgba(0,0,0,0.04) 2px,
-    transparent 2px,
-    transparent 18px
-  );
-  animation:moveBg 20s linear infinite;
-  pointer-events:none;
-}
-
-@keyframes moveBg{
-  from{background-position:0 0;}
-  to{background-position:400px 400px;}
-}
-
-.header{
-  text-align:center;
-  padding:40px 20px 10px;
-  position:relative;
-  z-index:2;
-}
-
-.header h1{
-  font-size:clamp(26px,6vw,44px);
-  margin:0;
-}
-
-.header .en{
-  opacity:.6;
-  margin-top:6px;
-}
-
-.stage{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:25px;
-  padding-bottom:60px;
-  position:relative;
-  z-index:2;
-}
-
-.envelope{
-  width:220px;
-  height:140px;
-  background:#fff;
-  border-radius:14px;
-  box-shadow:0 20px 40px rgba(0,0,0,.25);
-  position:relative;
-  cursor:pointer;
-  transition:.3s;
-}
-.envelope:hover{ transform:translateY(-6px); }
-
-.envelope:before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(135deg,#f8e8d8,#fff);
-  clip-path:polygon(0 0,100% 0,50% 58%);
-}
-
-.envelope span{
-  position:absolute;
-  bottom:10px;
-  width:100%;
-  text-align:center;
-  font-size:18px;
-}
-
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.4);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  z-index:999;
-}
-.modal.show{ display:flex; }
-
-.paper{
-  width:100%;
-  max-width:760px;
-  max-height:85vh;
-  overflow-y:auto;
-  background:#fffdf7;
-  border-radius:16px;
-  padding:30px;
-  font-family:'Patrick Hand',cursive;
-  box-shadow:0 30px 70px rgba(0,0,0,.35);
-}
-
-.paper h2{ margin:0; font-size:clamp(22px,5vw,30px);}
-.paper .en{ opacity:.6; margin-bottom:20px;}
-.paper p{
-  font-size:clamp(18px,4vw,22px);
-  line-height:1.8;
-  white-space:pre-line;
-}
-
-.audio-btn{
-  position:fixed;
-  top:20px;
-  right:20px;
-  width:46px;
-  height:46px;
-  border-radius:50%;
-  background:#fff;
-  box-shadow:0 10px 20px rgba(0,0,0,.25);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  z-index:20;
-}
+html,body{margin:0;font-family:'Anuphan',sans-serif;background:#f4ede6;overflow-x:hidden;}
+.bg{position:fixed;inset:0;z-index:0;background:repeating-linear-gradient(45deg,rgba(0,0,0,0.04) 0px,rgba(0,0,0,0.04) 2px,transparent 2px,transparent 18px);animation:moveBg 20s linear infinite;pointer-events:none;}
+@keyframes moveBg{from{background-position:0 0;}to{background-position:400px 400px;}}
+.header{text-align:center;padding:40px 20px 10px;position:relative;z-index:2;}
+.header h1{font-size:clamp(26px,6vw,44px);margin:0;}
+.header .en{opacity:.6;margin-top:6px;}
+.stage{display:flex;flex-direction:column;align-items:center;gap:25px;padding-bottom:60px;position:relative;z-index:2;}
+.envelope{width:220px;height:140px;background:#fff;border-radius:14px;box-shadow:0 20px 40px rgba(0,0,0,.25);position:relative;cursor:pointer;transition:.3s;}
+.envelope:hover{transform:translateY(-6px);}
+.envelope:before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,#f8e8d8,#fff);clip-path:polygon(0 0,100% 0,50% 58%);}
+.envelope span{position:absolute;bottom:10px;width:100%;text-align:center;font-size:18px;}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;padding:20px;z-index:999;}
+.modal.show{display:flex;}
+.paper{width:100%;max-width:760px;max-height:85vh;overflow-y:auto;background:#fffdf7;border-radius:16px;padding:30px;font-family:'Patrick Hand',cursive;box-shadow:0 30px 70px rgba(0,0,0,.35);}
+.paper h2{margin:0;font-size:clamp(22px,5vw,30px);}
+.paper .en{opacity:.6;margin-bottom:20px;}
+.paper p{font-size:clamp(18px,4vw,22px);line-height:1.8;white-space:pre-line;}
+.audio-btn{position:fixed;top:20px;right:20px;width:46px;height:46px;border-radius:50%;background:#fff;box-shadow:0 10px 20px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:20;}
 </style>
 </head>
 
 <body>
 
 <div class="bg"></div>
-
 <div class="audio-btn" onclick="toggleMusic()">🎵</div>
 
 <header class="header">
@@ -165,12 +52,13 @@ html,body{
   <div class="paper" id="paper"></div>
 </div>
 
-<audio id="bgm" src="audio/yellow.mp3" loop></audio>
-<audio id="openSound" src="audio/paper-slide.mp3"></audio>
-<audio id="writeSound" src="audio/paper-write.mp3"></audio>
+<audio id="bgm" src="audio/yellow.mp3" loop preload="auto" playsinline></audio>
+<audio id="openSound" src="audio/paper-slide.mp3" preload="auto" playsinline></audio>
+<audio id="writeSound" src="audio/paper-write.mp3" preload="auto" playsinline></audio>
 
 <script>
 
+/* ===== LETTER DATA ครบทุกคำ ===== */
 const letters = [
 {
 title:"วันที่เค้างอแง แต่ไม่กล้าพูด",
@@ -211,7 +99,6 @@ text:`เอาจริงนะ เค้าว่าเค้าเปลี�
 ปล. เค้าจะพยายาม “กล้าพูด”
 ให้มากขึ้นในทุกๆวันนะคะ!`
 },
-
 {
 title:"วันที่คิดถึงบี๋มากกว่าปกติ",
 en:"Missing you in ways I didn’t know how to say.",
@@ -236,7 +123,6 @@ text:`เค้าเป็นนุกน้อยขาดความอบ�
 แต่เค้าก็คิดถึงบี๋สุดที่รัก
 อยู่ดีนั่นแหละ (อ่าว)`
 },
-
 {
 title:"วันที่กลัวว่าจะเสียบี๋ไป",
 en:"The fear of losing you taught me something about myself.",
@@ -266,13 +152,12 @@ text:`จดหมายฉบับนี้น่าจัวมาก
 บี๋ก็ยังเลือกเค้า
 พยายามทำให้เค้ามั่นใจ
 
-คอย reassure กับเค้าตลอด
+คอย real sure กับเค้าตลอด
 ว่าบี๋รักเค้า เค้ามีค่า
 
 เค้าดีใจมากๆเลย
 ที่ได้รัก และได้รับความรักจากบี๋ด้วยเช่นกันนะคะ 💐`
 },
-
 {
 title:"จดหมายจากเค้าในวันนี้ (ถึงบี๋)",
 en:"This is who I am now.",
@@ -297,68 +182,61 @@ text:`น้องนุกในวันนี้
 }
 ];
 
+/* ===== เสียง (แก้ให้มือถือเล่นได้) ===== */
 const bgm = document.getElementById("bgm");
 const openSound = document.getElementById("openSound");
 const writeSound = document.getElementById("writeSound");
 
-let unlocked = false;
+bgm.volume = 0.5;
+openSound.volume = 0.8;
+writeSound.volume = 0.4;
 
 function unlockAudio(){
-  if(unlocked) return;
-  bgm.volume = 0.5;
-  writeSound.volume = 0.4;
-  openSound.volume = 0.6;
-  unlocked = true;
+  [bgm, openSound, writeSound].forEach(a=>{
+    a.play().then(()=>{a.pause();a.currentTime=0;}).catch(()=>{});
+  });
 }
-document.body.addEventListener("click", unlockAudio, {once:true});
+document.addEventListener("click", unlockAudio, {once:true});
 
 function toggleMusic(){
-  unlockAudio();
-  if(bgm.paused){ bgm.play(); }
+  if(bgm.paused){ bgm.play().catch(()=>{}); }
   else{ bgm.pause(); }
 }
 
-const envelopes = document.querySelectorAll(".envelope");
-const modal = document.getElementById("modal");
-const paper = document.getElementById("paper");
+const envelopes=document.querySelectorAll(".envelope");
+const modal=document.getElementById("modal");
+const paper=document.getElementById("paper");
 
 envelopes.forEach(env=>{
-  env.addEventListener("click", ()=>{
-    openLetter(env.dataset.id);
+  env.addEventListener("click",()=>{
+    openSound.currentTime=0;
+    openSound.play().catch(()=>{});
+    modal.classList.add("show");
+    renderLetter(env.dataset.id);
   });
 });
 
-modal.addEventListener("click", e=>{
-  if(e.target === modal){
-    modal.classList.remove("show");
-  }
+modal.addEventListener("click",e=>{
+  if(e.target===modal){ modal.classList.remove("show"); }
 });
-
-function openLetter(i){
-  unlockAudio();
-  openSound.currentTime = 0;
-  openSound.play();
-  modal.classList.add("show");
-  renderLetter(i);
-}
 
 async function typeWriter(el,text){
   el.innerHTML="";
+  writeSound.loop=true;
+  writeSound.play().catch(()=>{});
   for(const ch of text){
     el.innerHTML+=ch;
-    if(ch.trim()){
-      writeSound.currentTime=0;
-      writeSound.play().catch(()=>{});
-    }
     await new Promise(r=>setTimeout(r,28));
   }
+  writeSound.pause();
+  writeSound.currentTime=0;
 }
 
 function renderLetter(i){
   paper.innerHTML=`
-  <h2>${letters[i].title}</h2>
-  <div class="en">${letters[i].en}</div>
-  <p id="content"></p>
+    <h2>${letters[i].title}</h2>
+    <div class="en">${letters[i].en}</div>
+    <p id="content"></p>
   `;
   typeWriter(document.getElementById("content"),letters[i].text);
 }
