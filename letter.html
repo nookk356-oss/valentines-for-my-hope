@@ -11,52 +11,60 @@
 *{box-sizing:border-box}
 html,body{
   margin:0;
-  height:100%;
   font-family:'Anuphan',sans-serif;
   background:#f4ede6;
-  overflow:hidden;
+  overflow-x:hidden;
 }
 
-/* Background */
+/* พื้นหลังลายดินสอ */
 .bg{
   position:fixed;
   inset:0;
-  background:linear-gradient(120deg,#f4ede6,#efe2d4,#f4ede6);
-  animation:bgMove 18s infinite alternate ease-in-out;
   z-index:0;
-}
-@keyframes bgMove{
-  from{transform:translateY(0)}
-  to{transform:translateY(-40px)}
+  background:
+  repeating-linear-gradient(
+    45deg,
+    rgba(0,0,0,0.04) 0px,
+    rgba(0,0,0,0.04) 2px,
+    transparent 2px,
+    transparent 18px
+  );
+  animation:moveBg 20s linear infinite;
+  pointer-events:none;
 }
 
-/* Header */
+@keyframes moveBg{
+  from{background-position:0 0;}
+  to{background-position:400px 400px;}
+}
+
 .header{
   text-align:center;
-  padding:50px 0 20px;
+  padding:40px 20px 10px;
   position:relative;
   z-index:2;
 }
+
 .header h1{
-  font-size:44px;
+  font-size:clamp(26px,6vw,44px);
   margin:0;
 }
+
 .header .en{
   opacity:.6;
   margin-top:6px;
 }
 
-/* Stage */
 .stage{
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:30px;
+  gap:25px;
+  padding-bottom:60px;
   position:relative;
   z-index:2;
 }
 
-/* Envelope */
 .envelope{
   width:220px;
   height:140px;
@@ -67,9 +75,8 @@ html,body{
   cursor:pointer;
   transition:.3s;
 }
-.envelope:hover{
-  transform:translateY(-6px);
-}
+.envelope:hover{ transform:translateY(-6px); }
+
 .envelope:before{
   content:"";
   position:absolute;
@@ -77,6 +84,7 @@ html,body{
   background:linear-gradient(135deg,#f8e8d8,#fff);
   clip-path:polygon(0 0,100% 0,50% 58%);
 }
+
 .envelope span{
   position:absolute;
   bottom:10px;
@@ -85,50 +93,38 @@ html,body{
   font-size:18px;
 }
 
-/* Modal */
 .modal{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.35);
+  background:rgba(0,0,0,.4);
   display:none;
   align-items:center;
   justify-content:center;
-  z-index:9999;
+  padding:20px;
+  z-index:999;
 }
-.modal.show{
-  display:flex;
-}
+.modal.show{ display:flex; }
 
-/* Paper */
 .paper{
-  width:760px;
-  max-width:92%;
+  width:100%;
+  max-width:760px;
+  max-height:85vh;
+  overflow-y:auto;
   background:#fffdf7;
   border-radius:16px;
-  padding:40px;
+  padding:30px;
   font-family:'Patrick Hand',cursive;
   box-shadow:0 30px 70px rgba(0,0,0,.35);
-  animation:rise .6s ease;
 }
-@keyframes rise{
-  from{transform:translateY(60px);opacity:0}
-  to{transform:none;opacity:1}
-}
-.paper h2{
-  margin:0;
-  font-size:30px;
-}
-.paper .en{
-  opacity:.6;
-  margin-bottom:20px;
-}
+
+.paper h2{ margin:0; font-size:clamp(22px,5vw,30px);}
+.paper .en{ opacity:.6; margin-bottom:20px;}
 .paper p{
-  font-size:22px;
+  font-size:clamp(18px,4vw,22px);
   line-height:1.8;
   white-space:pre-line;
 }
 
-/* Audio Button */
 .audio-btn{
   position:fixed;
   top:20px;
@@ -151,7 +147,7 @@ html,body{
 
 <div class="bg"></div>
 
-<div class="audio-btn" onclick="toggleMusic()">🔊</div>
+<div class="audio-btn" onclick="toggleMusic()">🎵</div>
 
 <header class="header">
   <h1>จดหมายถึงบี๋</h1>
@@ -159,59 +155,23 @@ html,body{
 </header>
 
 <section class="stage">
-  <div class="envelope" onclick="openLetter(0)"><span>💭 ซองที่ 1</span></div>
-  <div class="envelope" onclick="openLetter(1)"><span>💌 ซองที่ 2</span></div>
-  <div class="envelope" onclick="openLetter(2)"><span>🌧️ ซองที่ 3</span></div>
-  <div class="envelope" onclick="openLetter(3)"><span>🌱 ซองที่ 4</span></div>
+  <div class="envelope" data-id="0"><span>💭 ซองที่ 1</span></div>
+  <div class="envelope" data-id="1"><span>💌 ซองที่ 2</span></div>
+  <div class="envelope" data-id="2"><span>🌧️ ซองที่ 3</span></div>
+  <div class="envelope" data-id="3"><span>🌱 ซองที่ 4</span></div>
 </section>
 
-<div class="modal" id="modal" onclick="closeModal(event)">
+<div class="modal" id="modal">
   <div class="paper" id="paper"></div>
 </div>
 
-<!-- AUDIO -->
-<audio id="bgmLetter" src="audio/chueafai-hugo.mp3" loop></audio>
-<audio id="openSound" src="audio/envelope-open.mp3"></audio>
-<audio id="slideSound" src="audio/paper-slide.mp3"></audio>
+<audio id="bgm" src="audio/yellow.mp3" loop></audio>
+<audio id="openSound" src="audio/paper-slide.mp3"></audio>
 <audio id="writeSound" src="audio/paper-write.mp3"></audio>
 
 <script>
 
-/* AUDIO FIX */
-const bgm=document.getElementById('bgmLetter');
-const openSound=document.getElementById('openSound');
-const slideSound=document.getElementById('slideSound');
-const writeSound=document.getElementById('writeSound');
-
-let unlocked=false;
-
-function unlockAudio(){
-  if(unlocked) return;
-  [bgm,openSound,slideSound,writeSound].forEach(a=>{
-    a.volume=0.01;
-    a.play().then(()=>{
-      a.pause();
-      a.currentTime=0;
-    }).catch(()=>{});
-  });
-  unlocked=true;
-}
-
-document.body.addEventListener("pointerdown",unlockAudio,{once:true});
-
-function toggleMusic(){
-  unlockAudio();
-  if(bgm.paused){
-    bgm.volume=0.45;
-    bgm.play();
-  }else{
-    bgm.pause();
-  }
-}
-
-/* LETTER DATA (ครบ ไม่ตัด) */
-const letters=[
-
+const letters = [
 {
 title:"วันที่เค้างอแง แต่ไม่กล้าพูด",
 en:"When my emotions spoke louder than my courage.",
@@ -306,7 +266,7 @@ text:`จดหมายฉบับนี้น่าจัวมาก
 บี๋ก็ยังเลือกเค้า
 พยายามทำให้เค้ามั่นใจ
 
-คอย real sure กับเค้าตลอด
+คอย reassure กับเค้าตลอด
 ว่าบี๋รักเค้า เค้ามีค่า
 
 เค้าดีใจมากๆเลย
@@ -335,47 +295,74 @@ text:`น้องนุกในวันนี้
 ป่ะ
 เราจับมือเดินไปด้วยกันนนนนนนน ❤️`
 }
-
 ];
 
+const bgm = document.getElementById("bgm");
+const openSound = document.getElementById("openSound");
+const writeSound = document.getElementById("writeSound");
+
+let unlocked = false;
+
+function unlockAudio(){
+  if(unlocked) return;
+  bgm.volume = 0.5;
+  writeSound.volume = 0.4;
+  openSound.volume = 0.6;
+  unlocked = true;
+}
+document.body.addEventListener("click", unlockAudio, {once:true});
+
+function toggleMusic(){
+  unlockAudio();
+  if(bgm.paused){ bgm.play(); }
+  else{ bgm.pause(); }
+}
+
+const envelopes = document.querySelectorAll(".envelope");
+const modal = document.getElementById("modal");
+const paper = document.getElementById("paper");
+
+envelopes.forEach(env=>{
+  env.addEventListener("click", ()=>{
+    openLetter(env.dataset.id);
+  });
+});
+
+modal.addEventListener("click", e=>{
+  if(e.target === modal){
+    modal.classList.remove("show");
+  }
+});
+
 function openLetter(i){
-unlockAudio();
-openSound.play();
-document.getElementById('modal').classList.add('show');
-setTimeout(()=>slideSound.play(),300);
-renderPaper(i);
+  unlockAudio();
+  openSound.currentTime = 0;
+  openSound.play();
+  modal.classList.add("show");
+  renderLetter(i);
 }
 
-function closeModal(e){
-if(e.target.id==="modal"){
-document.getElementById('modal').classList.remove('show');
-}
-}
-
-async function typeText(el,text){
-el.innerHTML="";
-writeSound.volume=0.35;
-for(const ch of text){
-el.innerHTML+=ch;
-if(ch.trim()){
-writeSound.currentTime=0;
-writeSound.play().catch(()=>{});
-}
-await new Promise(r=>setTimeout(r,45));
-}
+async function typeWriter(el,text){
+  el.innerHTML="";
+  for(const ch of text){
+    el.innerHTML+=ch;
+    if(ch.trim()){
+      writeSound.currentTime=0;
+      writeSound.play().catch(()=>{});
+    }
+    await new Promise(r=>setTimeout(r,28));
+  }
 }
 
-function renderPaper(i){
-const p=document.getElementById('paper');
-p.innerHTML=`
-<h2>${letters[i].title}</h2>
-<div class="en">${letters[i].en}</div>
-<p id="txt"></p>
-`;
-typeText(document.getElementById('txt'),letters[i].text);
+function renderLetter(i){
+  paper.innerHTML=`
+  <h2>${letters[i].title}</h2>
+  <div class="en">${letters[i].en}</div>
+  <p id="content"></p>
+  `;
+  typeWriter(document.getElementById("content"),letters[i].text);
 }
 
 </script>
-
 </body>
 </html>
