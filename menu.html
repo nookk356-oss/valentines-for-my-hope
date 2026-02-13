@@ -196,7 +196,6 @@ for(let i=0;i<20;i++){
         <span>เค้าเขียนให้บี๋</span>
       </div>
 
-      <!-- 🔥 ตรงนี้แก้แล้ว -->
       <div class="menu-card" onclick="go('quiz-menu.html')">
         <div class="icon">🎯</div>
         <h3>Quiz ของเรา</h3>
@@ -221,6 +220,30 @@ for(let i=0;i<20;i++){
 </div>
 
 <script>
+const bgm=document.getElementById("bgm");
+const btn=document.getElementById("musicBtn");
+let playing=false;
+
+btn.onclick=()=>{
+  if(!playing){
+    bgm.volume=0;
+    bgm.play().catch(()=>{});
+    let v=0;
+    const fade=setInterval(()=>{
+      v+=0.02;
+      bgm.volume=Math.min(v,.35);
+      if(v>=.35) clearInterval(fade);
+    },60);
+    btn.textContent="🔊";
+    btn.classList.remove("off");
+  }else{
+    bgm.pause();
+    btn.textContent="🎵";
+    btn.classList.add("off");
+  }
+  playing=!playing;
+};
+
 function go(page){
   window.location.href = page;
 }
