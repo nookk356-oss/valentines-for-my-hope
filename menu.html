@@ -29,7 +29,6 @@ body{
   animation:bgFlow 28s ease-in-out infinite;
   overflow:hidden;
   color:#fff;
-  transition:opacity .6s ease;
 }
 @keyframes bgFlow{
   0%{background-position:0% 0%}
@@ -46,7 +45,6 @@ body{
   font-family:'Pacifico',cursive;
   font-size:160px;
   color:rgba(255,90,150,.22);
-  letter-spacing:3px;
   pointer-events:none;
   animation:loverFloat 20s ease-in-out infinite;
 }
@@ -66,23 +64,6 @@ body{
   from{transform:translateY(120vh)}
   to{transform:translateY(-140vh)}
 }
-
-.music-toggle{
-  position:fixed;
-  top:18px;
-  right:18px;
-  padding:10px 16px;
-  border-radius:22px;
-  border:none;
-  font-size:16px;
-  background:rgba(255,255,255,.35);
-  backdrop-filter:blur(14px);
-  box-shadow:0 6px 18px rgba(0,0,0,.18);
-  color:#fff;
-  cursor:pointer;
-  z-index:20;
-}
-.music-toggle.off{opacity:.6}
 
 .header{
   text-align:center;
@@ -119,9 +100,7 @@ body{
   margin:14px 0 18px;
   box-shadow:0 20px 44px rgba(0,0,0,.25);
   cursor:pointer;
-  transition:.3s;
 }
-.hero:active{transform:scale(.97)}
 
 .menu-grid{
   display:grid;
@@ -136,9 +115,7 @@ body{
   text-align:center;
   box-shadow:0 10px 24px rgba(0,0,0,.12);
   cursor:pointer;
-  transition:.2s;
 }
-.menu-card:active{transform:scale(.94)}
 
 .menu-card .icon{
   font-size:24px;
@@ -172,8 +149,8 @@ for(let i=0;i<20;i++){
 }
 </script>
 
-<audio id="bgm" src="lover.mp3" loop></audio>
-<button class="music-toggle off" id="musicBtn">🎵</button>
+<!-- 🎵 เล่นเพลงอัตโนมัติ -->
+<audio id="bgm" src="lover.mp3" loop autoplay muted></audio>
 
 <div class="header">
   <h1>Our Love</h1>
@@ -220,29 +197,22 @@ for(let i=0;i<20;i++){
 </div>
 
 <script>
-const bgm=document.getElementById("bgm");
-const btn=document.getElementById("musicBtn");
-let playing=false;
+/* 🔥 ให้ browser ยอมเปิดเสียงเอง */
+const bgm = document.getElementById("bgm");
 
-btn.onclick=()=>{
-  if(!playing){
-    bgm.volume=0;
-    bgm.play().catch(()=>{});
-    let v=0;
-    const fade=setInterval(()=>{
-      v+=0.02;
-      bgm.volume=Math.min(v,.35);
-      if(v>=.35) clearInterval(fade);
-    },60);
-    btn.textContent="🔊";
-    btn.classList.remove("off");
-  }else{
-    bgm.pause();
-    btn.textContent="🎵";
-    btn.classList.add("off");
-  }
-  playing=!playing;
-};
+window.addEventListener("load",()=>{
+  bgm.play().then(()=>{
+    bgm.muted=false;
+    bgm.volume=0.35;
+  }).catch(()=>{
+    // ถ้า browser ยัง block อยู่ จะเปิดเมื่อผู้ใช้คลิกครั้งแรก
+    window.addEventListener("click",()=>{
+      bgm.muted=false;
+      bgm.volume=0.35;
+      bgm.play();
+    },{ once:true });
+  });
+});
 
 function go(page){
   window.location.href = page;
